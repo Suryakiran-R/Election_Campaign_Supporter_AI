@@ -14,3 +14,5 @@ A backend service using Flask + Twilio to interact with voters via WhatsApp and 
 ```bash
 git clone https://github.com/Suryakiran-R/Election_Campaign_Supporter_AI.git
 cd Election_Campaign_Supporter_AI
+
+# .\venv\Scripts\Activate - if a virtual environment is setup at a later stage
