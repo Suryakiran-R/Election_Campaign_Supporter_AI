@@ -2,7 +2,12 @@ import os
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from services.db import save_message
+from ai_agent.ai_agent import generate_ai_response  # Import your AI responder
+from dotenv import load_dotenv
 import logging
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -20,7 +25,7 @@ def index():
 def whatsapp_webhook():
     incoming_msg = request.values.get('Body', '').strip()
     sender = request.values.get('From', '')
-    
+
     logging.info(f"Message from {sender}: {incoming_msg}")
 
     # Save to DB
@@ -29,9 +34,16 @@ def whatsapp_webhook():
         "message": incoming_msg
     })
 
-    # Reply placeholder
+    # Get AI-based response
+    try:
+        response = generate_ai_response(incoming_msg)
+    except Exception as e:
+        logging.error(f"Error generating AI response: {str(e)}")
+        response = "Sorry, there was an error processing your request."
+
+    # Reply to WhatsApp
     resp = MessagingResponse()
-    msg = resp.message("Thanks for your message! Our team will get back to you soon.")
+    msg = resp.message(response)
     return str(resp)
 
 if __name__ == '__main__':
