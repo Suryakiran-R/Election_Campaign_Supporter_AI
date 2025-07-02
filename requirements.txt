@@ -1,6 +1,9 @@
-flask
+Flask
+pymongo
+requests
+sentence-transformers
+transformers
+PyMuPDF
 python-dotenv
 twilio
-pymongo
-PyMuPDF 
-requests
+scikit-learn
