@@ -6,6 +6,9 @@ import logging
 
 app = Flask(__name__)
 
+# Ensure logs directory exists
+os.makedirs('logs', exist_ok=True)
+
 # Set up logging
 logging.basicConfig(filename='logs/messages.log', level=logging.INFO)
 
