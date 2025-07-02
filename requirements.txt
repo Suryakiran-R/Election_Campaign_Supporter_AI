@@ -3,4 +3,3 @@ python-dotenv
 twilio
 pymongo
 
-# .\venv\Scripts\Activate 
