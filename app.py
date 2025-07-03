@@ -15,8 +15,16 @@ app = Flask(__name__)
 # Ensure logs directory exists
 os.makedirs('logs', exist_ok=True)
 
-# Set up logging
-logging.basicConfig(filename='logs/messages.log', level=logging.INFO)
+import sys
+
+logging.basicConfig(
+    filename='logs/messages.log',
+    stream=sys.stdout,  # Log to console
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+# # Set up logging
+# logging.basicConfig(filename='logs/messages.log', level=logging.INFO)
 
 @app.route('/')
 def index():
@@ -27,6 +35,7 @@ def whatsapp_webhook():
     incoming_msg = request.values.get('Body', '').strip()
     sender = request.values.get('From', '')
 
+    print(f"🟢 Incoming message from {sender}: {incoming_msg}")
     logging.info(f"Message from {sender}: {incoming_msg}")
 
     # Save to DB
