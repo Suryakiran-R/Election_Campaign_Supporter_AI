@@ -35,7 +35,7 @@ def whatsapp_webhook():
     from flask import Response
     incoming_msg = request.values.get('Body', '').strip()
     sender = request.values.get('From', '')
-    
+    print(f"🟢 Incoming message from {sender}: {incoming_msg}")
     logging.info(f"Got message: {incoming_msg} from {sender}")
     
     resp = MessagingResponse()
