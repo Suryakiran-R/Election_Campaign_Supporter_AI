@@ -15,14 +15,14 @@ def generate_response(user_message: str) -> str:
     }
 
     payload = {
-        "model": "HuggingFaceH4/zephyr-7b-alpha",
+        "model": "HuggingFaceH4/zephyr-7b-beta",
         "messages": [
             {
                 "role": "system",
                 "content": (
-                    "You are a helpful election campaign assistant. Always respond concisely in plain English to voter questions. "
-                    "Focus only on employment, education, development, healthcare, and governance. Never write poems, stories, or fictional content. "
-                    "Limit your response to 2-3 short sentences. Maximum 300 characters."
+                    "You are an election campaign assistant helping voters understand a candidate's policies. "
+                    "Respond to WhatsApp queries concisely (under 300 characters) using only factual info shared "
+                    "in context. Do not make up answers or change the candidate's views."
                 )
             },
             {"role": "user", "content": user_message}
@@ -48,7 +48,7 @@ def generate_response(user_message: str) -> str:
         ]):
             return "Sorry, please ask about employment, healthcare, or government schemes."
 
-        return ai_response.strip()
+        return ai_response.strip()[:1024]
     
     except Exception as e:
         logging.error(f"Hugging Face API error: {e}")

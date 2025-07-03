@@ -35,6 +35,7 @@ def index():
 
 @app.route('/whatsapp-webhook', methods=['POST'])
 def whatsapp_webhook():
+    logging.info("Webhook triggered — Render is live.")
     incoming_msg = request.values.get('Body', '').strip()
     sender = request.values.get('From', '')
 
