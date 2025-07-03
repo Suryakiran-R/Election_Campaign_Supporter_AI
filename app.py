@@ -18,7 +18,6 @@ os.makedirs('logs', exist_ok=True)
 import sys
 
 logging.basicConfig(
-    filename='logs/messages.log',
     stream=sys.stdout,  # Log to console
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
