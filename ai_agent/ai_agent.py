@@ -1,10 +1,10 @@
 
-from ai_agent.responder import query_huggingface
+from ai_agent.responder import generate_response
 
 def generate_ai_response(user_query: str) -> str:
     # Bypass retriever to reduce memory
     prompt = f"User: {user_query}\nAI:"
-    return query_huggingface(prompt)
+    return generate_response(prompt)
 # # ai_agent/ai_agent.py
 
 # from ai_agent.document_loader import load_all_pdfs
