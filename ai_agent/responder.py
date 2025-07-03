@@ -2,6 +2,7 @@
 
 import requests
 import os
+import logging
 
 HUGGINGFACE_API_TOKEN = os.getenv("HF_API_TOKEN")  # Keep this in your .env file
 # API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1"
@@ -16,12 +17,12 @@ def generate_response(user_message: str) -> str:
     payload = {
         "model": "HuggingFaceH4/zephyr-7b-alpha",
         "messages": [
-            {
-                "role": "system",
-                "content": (
-                    "You are a helpful assistant who answers election policy questions. Avoid medical or irrelevant content."
-                )
-            },
+            # {
+            #     "role": "system",
+            #     "content": (
+            #         "You are a helpful assistant who answers election policy questions. Avoid medical or irrelevant content."
+            #     )
+            # },
             {"role": "user", "content": user_message}
         ]
     }
@@ -29,9 +30,24 @@ def generate_response(user_message: str) -> str:
     try:
         response = requests.post(API_URL, headers=headers, json=payload)
         response.raise_for_status()
-        return response.json()["choices"][0]["message"]["content"]
+
+        result = response.json()
+        logging.info("Hugging Face response received successfully.")
+
+        if "choices" not in result or not result["choices"]:
+            logging.error("Unexpected HF API response format.")
+            return "I'm having trouble understanding that right now."
+
+        return result["choices"][0]["message"]["content"]
+
     except Exception as e:
-        if response is not None:
-            return f"Error: {e}\nDetails: {response.text}"
-        print('Exception occured:',e)
-        return f"Error talking to AI model: {e}"
+        logging.error(f"Hugging Face API error: {e}")
+        if 'response' in locals() and response is not None:
+            logging.error(f"Details: {response.text}")
+        return "AI model error. Please try again later."
+    #     return response.json()["choices"][0]["message"]["content"]
+    # except Exception as e:
+    #     if response is not None:
+    #         return f"Error: {e}\nDetails: {response.text}"
+    #     print('Exception occured:',e)
+    #     return f"Error talking to AI model: {e}"

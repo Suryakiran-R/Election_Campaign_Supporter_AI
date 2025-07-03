@@ -1,10 +1,17 @@
-
 from ai_agent.responder import generate_response
+import logging
 
 def generate_ai_response(user_query: str) -> str:
-    # Bypass retriever to reduce memory
-    prompt = f"User: {user_query}\nAI:"
-    return generate_response(prompt)
+    logging.info(f"Generating AI response for: {user_query}")
+    try:
+        prompt = f"User: {user_query}\nAI:"
+        response = generate_response(prompt)
+        logging.info(f"AI response: {response}")
+        return response
+    except Exception as e:
+        logging.error(f"Error in generate_ai_response: {e}")
+        return "Sorry, I couldn't generate a response right now."
+    
 # # ai_agent/ai_agent.py
 
 # from ai_agent.document_loader import load_all_pdfs
