@@ -15,9 +15,12 @@ def query_huggingface(prompt: str) -> str:
         "parameters": {"temperature": 0.7, "max_new_tokens": 300}
     }
 
-    response = requests.post(API_URL, headers=headers, json=payload)
-    if response.status_code == 200:
-        generated = response.json()
-        return generated[0]["generated_text"]
-    else:
-        return f"Error from Hugging Face API: {response.status_code}, {response.text}"
+    try:
+        response = requests.post(API_URL, headers=headers, json=payload)
+        if response.status_code == 200:
+            generated = response.json()
+            return generated[0]["generated_text"]
+        else:
+            return f"Error from Hugging Face API: {response.status_code}, {response.text}"
+    except requests.exceptions.Timeout:
+        return "⚠️ The AI model took too long to respond. Please try again in a few moments."
