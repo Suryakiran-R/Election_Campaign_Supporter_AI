@@ -7,7 +7,7 @@ import logging
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-def generate_ai_response(user_message: str) -> str:
+def generate_response(user_message: str) -> str:
     logging.info(f"Generating AI response for: {user_message}")
 
     headers = {
