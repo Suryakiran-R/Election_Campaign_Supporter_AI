@@ -16,6 +16,12 @@ def generate_response(user_message: str) -> str:
     payload = {
         "model": "HuggingFaceH4/zephyr-7b-alpha",
         "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are a helpful assistant who answers election policy questions. Avoid medical or irrelevant content."
+                )
+            },
             {"role": "user", "content": user_message}
         ]
     }
@@ -27,4 +33,5 @@ def generate_response(user_message: str) -> str:
     except Exception as e:
         if response is not None:
             return f"Error: {e}\nDetails: {response.text}"
+        print('Exception occured:',e)
         return f"Error talking to AI model: {e}"
