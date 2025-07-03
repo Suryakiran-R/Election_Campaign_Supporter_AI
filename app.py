@@ -32,30 +32,41 @@ def index():
 
 @app.route('/whatsapp-webhook', methods=['POST'])
 def whatsapp_webhook():
+    from flask import Response
     incoming_msg = request.values.get('Body', '').strip()
     sender = request.values.get('From', '')
-
-    print(f"🟢 Incoming message from {sender}: {incoming_msg}")
-    logging.info(f"Message from {sender}: {incoming_msg}")
-
-    # Save to DB
-    save_message({
-        "sender": sender,
-        "message": incoming_msg
-    })
-
-    # Get AI-based response
-    try:
-        response = generate_ai_response(incoming_msg)
-
-    except Exception as e:
-        logging.error(f"Error generating AI response: {str(e)}")
-        response = "Sorry, there was an error processing your request."
-
-    # Reply to WhatsApp
+    
+    logging.info(f"Got message: {incoming_msg} from {sender}")
+    
     resp = MessagingResponse()
-    msg = resp.message(response)
+    resp.message("✅ Your message was received.")
     return Response(str(resp), mimetype="application/xml")
+# def whatsapp_webhook():
+    
+#     incoming_msg = request.values.get('Body', '').strip()
+#     sender = request.values.get('From', '')
+
+#     print(f"🟢 Incoming message from {sender}: {incoming_msg}")
+#     logging.info(f"Message from {sender}: {incoming_msg}")
+
+#     # Save to DB
+#     save_message({
+#         "sender": sender,
+#         "message": incoming_msg
+#     })
+
+#     # Get AI-based response
+#     try:
+#         response = generate_ai_response(incoming_msg)
+
+#     except Exception as e:
+#         logging.error(f"Error generating AI response: {str(e)}")
+#         response = "Sorry, there was an error processing your request."
+
+#     # Reply to WhatsApp
+#     resp = MessagingResponse()
+#     msg = resp.message(response)
+#     return Response(str(resp), mimetype="application/xml")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
