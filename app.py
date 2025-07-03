@@ -49,6 +49,15 @@ def whatsapp_webhook():
     # Get AI-based response
     try:
         response = generate_ai_response(incoming_msg)
+
+         # Trim response to avoid WhatsApp truncation (max ~1600 chars safe)
+        MAX_WHATSAPP_LENGTH = 1500
+        if len(response) > MAX_WHATSAPP_LENGTH:
+            logging.warning(f"Response too long ({len(response)} chars). Trimming.")
+            response = response[:MAX_WHATSAPP_LENGTH - 50] + "... [truncated]"
+
+        logging.info(f"AI response: {response}")
+
     except Exception as e:
         logging.error(f"Error generating AI response: {str(e)}")
         response = "Sorry, there was an error processing your request."
