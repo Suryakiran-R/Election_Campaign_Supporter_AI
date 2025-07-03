@@ -1,63 +1,46 @@
 # ai_agent/responder.py
 
-import requests
 import os
+import requests
 import logging
 
-HUGGINGFACE_API_TOKEN = os.getenv("HF_API_TOKEN")  # Keep this in your .env file
-# API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1"
-API_URL = "https://router.huggingface.co/featherless-ai/v1/chat/completions"
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
+API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-def generate_response(user_message: str) -> str:
+def generate_ai_response(user_message: str) -> str:
+    logging.info(f"Generating AI response for: {user_message}")
+
     headers = {
-        "Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}",
-        "Content-Type": "application/json"
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+        "X-Title": "ElectionSupportBot",
+        "HTTP-Referer": "https://your-domain.com"
     }
 
     payload = {
-        "model": "HuggingFaceH4/zephyr-7b-beta",
+        "model": "mistralai/mistral-7b-instruct:free",
         "messages": [
             {
                 "role": "system",
                 "content": (
-                    "You are an election campaign assistant helping voters understand a candidate's policies. "
-                    "Respond to WhatsApp queries concisely (under 300 characters) using only factual info shared "
-                    "in context. Do not make up answers or change the candidate's views."
+                    "You are an election campaign assistant bot. "
+                    "Answer the user's question clearly and briefly (max 300 characters). "
+                    "Do NOT make up information. Focus only on candidate policies."
                 )
             },
             {"role": "user", "content": user_message}
-        ]
+        ],
+        "temperature": 0.7,
+        "max_tokens": 150
     }
 
     try:
         response = requests.post(API_URL, headers=headers, json=payload)
         response.raise_for_status()
-
-        result = response.json()
-        logging.info("Hugging Face response received successfully.")
-
-        if "choices" not in result or not result["choices"]:
-            logging.error("Unexpected HF API response format.")
-            return "I'm having trouble understanding that right now."
-
-        ai_response = result["choices"][0]["message"]["content"]
-
-          # 🛡️ Optional: Filter out poetic/fantasy content
-        if any(keyword in ai_response.lower() for keyword in [
-            "poem", "poetry", "once upon", "muse", "verse", "stars", "fantasy", "fiction", "rhymes"
-        ]):
-            return "Sorry, please ask about employment, healthcare, or government schemes."
-
-        return ai_response.strip()[:1024]
-    
+        reply = response.json()["choices"][0]["message"]["content"]
+        safe = reply.strip()[:1000] or "I’m here! How can I help with campaign questions?"
+        logging.info(f"AI response: {safe}")
+        return safe
     except Exception as e:
-        logging.error(f"Hugging Face API error: {e}")
-        if 'response' in locals() and response is not None:
-            logging.error(f"Details: {response.text}")
-        return "AI model error. Please try again later."
-    #     return response.json()["choices"][0]["message"]["content"]
-    # except Exception as e:
-    #     if response is not None:
-    #         return f"Error: {e}\nDetails: {response.text}"
-    #     print('Exception occured:',e)
-    #     return f"Error talking to AI model: {e}"
+        logging.error(f"OpenRouter error: {e}")
+        return "Sorry, I’m facing technical issues. Please try again later."
