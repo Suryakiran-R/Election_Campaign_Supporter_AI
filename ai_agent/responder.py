@@ -43,4 +43,4 @@ def generate_ai_response(user_message: str) -> str:
         return safe
     except Exception as e:
         logging.error(f"OpenRouter error: {e}")
-        return "Sorry, I’m facing technical issues. Please try again later."
+        return "Sorry, I'm facing technical issues. Please try again later."
