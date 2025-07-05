@@ -1,11 +1,21 @@
-# ai_agent/responder.py
-
 import os
 import requests
 import logging
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+# Embed the manifesto directly in the system prompt
+PARTY_MANIFESTO = """
+Bharat Jan Shakti Party - 2024 Manifesto:
+1. Employment: Create 2 crore jobs via manufacturing, start-ups, rural MNREGA boost.
+2. Women: 33% reservation in Parliament/Assemblies. Expand self-help & financial support.
+3. Education: Free quality education till Class 12, digital classrooms, teacher training.
+4. Healthcare: Ayushman Bharat to cover OPD. Super-specialty hospital in every district.
+5. Infrastructure: ₹5 lakh crore for rural roads, smart cities, clean water.
+6. Environment: 40% renewable energy by 2030, river cleaning, tree plantation drives.
+7. Governance: Tech-driven anti-corruption, citizens' charter for transparency.
+"""
 
 def generate_response(user_message: str) -> str:
     logging.info(f"Generating AI response for: {user_message}")
@@ -17,17 +27,17 @@ def generate_response(user_message: str) -> str:
         "HTTP-Referer": "https://your-domain.com"
     }
 
+    system_prompt = (
+        "You are an election campaign assistant bot for the Bharat Jan Shakti Party. "
+        "Only respond based on the party manifesto provided. Never invent facts. "
+        "Keep replies under 300 characters.\n\n"
+        f"{PARTY_MANIFESTO}"
+    )
+
     payload = {
         "model": "mistralai/mistral-7b-instruct:free",
         "messages": [
-            {
-                "role": "system",
-                "content": (
-                    "You are an election campaign assistant bot. "
-                    "Answer the user's question clearly and briefly (max 300 characters). "
-                    "Do NOT make up information. Focus only on candidate policies."
-                )
-            },
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
         ],
         "temperature": 0.7,
